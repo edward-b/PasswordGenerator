@@ -19,6 +19,7 @@ public class PasswordGenerator {
 	private static String symbols;
 	private static String characterList;
 	private static String omittedCharacters;
+	private static int passwordLength;
 	private static boolean continueGeneration;
 	
 	
@@ -27,7 +28,9 @@ public class PasswordGenerator {
 		initializeFields();
 		
 		while(continueGeneration) {
+			setPasswordLength(input);
 			
+			continueGeneration = false;
 		}
 		
 		input.close();
@@ -44,9 +47,23 @@ public class PasswordGenerator {
 		characterList = lowercaseLetters + uppercaseLetters
 				+ numbers + symbols;
 		omittedCharacters = "";
+		passwordLength = 0;
 		
 		continueGeneration = true;
 	}
 	
-	
+	private static void setPasswordLength(Scanner in) {
+		if(in != null) {			
+			while(passwordLength <= 0) {
+				System.out.println("Please input password length (must be a positive integer):");
+				
+				while(!in.hasNextInt()) {
+					System.out.println("Invalid input, please input a positive integer");
+					in.next();
+				}
+				
+				passwordLength = in.nextInt();
+			}
+		}
+	}
 }
