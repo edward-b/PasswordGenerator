@@ -81,18 +81,26 @@ public class PasswordGenerator {
 	}
 	
 	/**
-	 * Stores keyboard input as a string of characters to omit
-	 * from the generated password.
+	 * Prompts user if they want to omit any characters
+	 * and stores input as a string of characters to omit.
 	 * 
 	 * @param in Keyboard input
 	 */
 	
 	private static void setOmittedCharacters(Scanner in) {
 		if(in != null) {
-			while(omittedCharacters.isEmpty()) {
+			System.out.println("Omit any characters? (y/n)");
+			
+			String answer = in.next();
+			
+			while(!answer.equals("y") && !answer.equals("n")) {
+				System.out.println("Invalid answer, please type \"y\" or \"n\"");
+				answer = in.next();
+			}
+			
+			if(answer.equals("y")) {
 				System.out.println("Please input any characters to omit");
 				omittedCharacters += in.next();
-				omittedCharacters.replaceAll("\\s", "");
 			}
 		}
 	}
@@ -106,7 +114,7 @@ public class PasswordGenerator {
 	 */
 	
 	private static void generatePassword(int length, String omit) {
-		if((length > 0) && (!omit.isEmpty())) {
+		if(length > 0) {
 			SecureRandom random = new SecureRandom();
 			int charLength = characterList.length();
 			char randomChar = 0;
