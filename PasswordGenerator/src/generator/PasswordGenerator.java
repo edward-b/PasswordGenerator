@@ -19,6 +19,7 @@ public class PasswordGenerator {
 	private static String symbols;
 	private static String characterList;
 	private static String omittedCharacters;
+	private static String generatedPassword;
 	private static int passwordLength;
 	private static boolean continueGeneration;
 	
@@ -29,12 +30,17 @@ public class PasswordGenerator {
 		
 		while(continueGeneration) {
 			setPasswordLength(input);
-			
-			continueGeneration = false;
+			setOmittedCharacters(input);
+			generatePassword(passwordLength, omittedCharacters);
+			updateLoop(input);
 		}
 		
 		input.close();
 	}
+	
+	/**
+	 * Initializes every field.
+	 */
 	
 	private static void initializeFields() {
 		input = new Scanner(System.in);
@@ -43,14 +49,21 @@ public class PasswordGenerator {
 		uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		numbers = "1234567890";
 		symbols = "`-=~!@#$%^&*()_+[]\\{}|;':\",./<>?";
-		
 		characterList = lowercaseLetters + uppercaseLetters
 				+ numbers + symbols;
+		
 		omittedCharacters = "";
+		generatedPassword = "";
 		passwordLength = 0;
 		
 		continueGeneration = true;
 	}
+	
+	/**
+	 * Takes keyboard input to set the length of the password.
+	 * 
+	 * @param in Keyboard input
+	 */
 	
 	private static void setPasswordLength(Scanner in) {
 		if(in != null) {			
@@ -63,6 +76,80 @@ public class PasswordGenerator {
 				}
 				
 				passwordLength = in.nextInt();
+			}
+		}
+	}
+	
+	/**
+	 * Stores keyboard input as a string of characters to omit
+	 * from the generated password.
+	 * 
+	 * @param in Keyboard input
+	 */
+	
+	private static void setOmittedCharacters(Scanner in) {
+		if(in != null) {
+			while(omittedCharacters.isEmpty()) {
+				System.out.println("Please input any characters to omit");
+				omittedCharacters += in.next();
+				omittedCharacters.replaceAll("\\s", "");
+			}
+		}
+	}
+	
+	/**
+	 * Generates a random password with the specified length
+	 * and omitted characters.
+	 * 
+	 * @param length The password length
+	 * @param omit Characters to be omitted
+	 */
+	
+	private static void generatePassword(int length, String omit) {
+		if((length > 0) && (!omit.isEmpty())) {
+			SecureRandom random = new SecureRandom();
+			int charLength = characterList.length();
+			char randomChar = 0;
+			
+			for(int i = 0; i < length; i++) {
+				randomChar = characterList.charAt(random.nextInt(charLength - 1));
+				
+				while(omittedCharacters.indexOf(randomChar) >= 0) {
+					randomChar = characterList.charAt(random.nextInt(charLength - 1));
+				}
+				
+				generatedPassword += randomChar;
+			}
+			
+			System.out.println("Generated password: " + generatedPassword);
+		}
+	}
+	
+	/**
+	 * Prompts user if they want to continue generating passwords
+	 * or stop and exit the program.
+	 * 
+	 * @param in Keyboard input
+	 */
+	
+	private static void updateLoop(Scanner in) {
+		if(in != null) {
+			System.out.println("Generate a new password? (y/n)");
+			
+			String answer = in.next();
+			
+			while(!answer.equals("y") && !answer.equals("n")) {
+				System.out.println("Invalid answer, please type \"y\" or \"n\"");
+				answer = in.next();
+			}
+			
+			if(answer.equals("y")) {
+				passwordLength = 0;
+				omittedCharacters = "";
+				generatedPassword = "";
+			}
+			else if (answer.equals("n")) {
+				continueGeneration = false;
 			}
 		}
 	}
